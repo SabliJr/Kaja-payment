@@ -1,6 +1,6 @@
-# 🚀 CrossChainPay
+# 🚀 Kaja Payment
 
-**CrossChainPay** is a next-generation payment gateway inspired by Stripe, but built for the Web3 ecosystem.  
+Kaja Payment **CrossChainPay** is a next-generation payment gateway inspired by Stripe, but built for the Web3 ecosystem.  
 It allows any developer or merchant to accept payments on the web in a seamless and programmable way —  
 whether the customer pays in native crypto, fiat-backed tokens on XRPL, or even cross-chain assets like USDT on Ethereum.
 
