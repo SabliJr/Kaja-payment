@@ -29,9 +29,9 @@ with **optional cross-chain settlement** — fully programmable, simple to integ
 ```bash
 git clone https://github.com/your-username/crosschainpay.git
 cd crosschainpay
-cd backend && pnpm install && pnpm seed && cd ..
+cd backend && pnpm install && pnpm seed && cd .. (only for first install)
 
-chmod +x init.sh
+chmod +x init.sh (run anytime)
 ./init.sh
 ```
 
