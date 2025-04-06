@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "@tanstack/react-router";
-
 import { Client, xrpToDrops, dropsToXrp } from "xrpl";
 
 import "./_checkout.css";
@@ -15,18 +14,24 @@ interface CrossmarkWallet {
     txJson: unknown,
     options: { network: string }
   ) => Promise<any>;
-  // add other methods as needed
+  methods: {
+    signInAndWait: () => Promise<void>;
+  };
+  session: {
+    address: string;
+  };
 }
 
-interface Window {
-  crossmark?: CrossmarkWallet;
+declare global {
+  interface Window {
+    crossmark?: CrossmarkWallet;
+  }
 }
 
 const CheckoutPage: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [fullName, setFullName] = useState("John Doe");
   const [email, setEmail] = useState("john.doe@gmail.com");
-
   const [name, setName] = useState("Wade Warren");
   const [address, setAddress] = useState(
     "4140 Parker Rd, Allentown, New Mexico 31134"
@@ -37,7 +42,6 @@ const CheckoutPage: React.FC = () => {
 
   const [userAddress, setUserAddress] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-  // const [balance, setBalance] = useState(0);
   const [wallet, setWallet] = useState<any>();
   const [client] = useState(new Client("wss://s.altnet.rippletest.net:51233"));
 
@@ -97,11 +101,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     console.log("start connection");
     client?.connect().then(() => {
-      // console.log("connected");
-      // console.log("funding wallet");
-
       client.fundWallet().then((fund_result: any) => {
-        // console.log(fund_result);
         setWallet(fund_result.wallet);
       });
     });
@@ -117,29 +117,26 @@ const CheckoutPage: React.FC = () => {
       Destination: "rQnQeT5SLgf3FzVCmdYZrzpJHL8sCUd6wr",
     };
 
-    // Submit the transaction --------------------------------------------
+    // Submit the transaction
     console.log("Submitting the transaction (Takes 3-5 seconds)");
     const submitted_tx = await client.submitAndWait(tx, {
       autofill: true,
       wallet: wallet,
     });
 
-    // Check transaction results -----------------------------------------
+    // Check transaction results
     console.log("Transaction result:", submitted_tx.result);
-    //  setStatusText("Sent! (See logs for full details)");
 
-    // Look up the new account balances by sending a request to the ledger
+    // Look up the new account balances
     const account_info = await client.request({
       command: "account_info",
       account: wallet.address,
     });
 
-    // See https://xrpl.org/account_info.html#account_info ---------------
     const balance = account_info.result.account_data.Balance;
     console.log(`New account balance: ${balance} drops`);
     setIsLoading(false);
-    alert("The payment went through, thaks for shopping with us :)");
-    // setBalance(dropsToXrp(balance));
+    alert("The payment went through, thanks for shopping with us :)");
     setPaymentStatus("done");
   }
 
@@ -168,32 +165,31 @@ const CheckoutPage: React.FC = () => {
   };
 
   return (
-<<<<<<< HEAD
     <>
-      {paymentStatus == "done" ? (
-        <p className='_done'>{paymentStatus} ✅</p>
+      {paymentStatus === "done" ? (
+        <p className="_done">{paymentStatus} ✅</p>
       ) : (
-        <div className='checkout-container'>
-          <div className='checkout-wrapper'>
-            <div className='left-section'>
-              <div className='review-item'>
-                <h2 className='_review_text'>Review Item And Shipping</h2>
-                <div className='item-details'>
+        <div className="checkout-container">
+          <div className="checkout-wrapper">
+            <div className="left-section">
+              <div className="review-item">
+                <h2 className="_review_text">Review Item And Shipping</h2>
+                <div className="item-details">
                   {cart.length === 0 ? (
                     <p>Your cart is empty.</p>
                   ) : (
                     cart.map((item: any) => (
-                      <div key={item.id} className='_item_div'>
-                        <div className='_img_div'>
+                      <div key={item.id} className="_item_div">
+                        <div className="_img_div">
                           <img
                             src={item.image}
-                            alt='product-img'
-                            className='item-image'
+                            alt="product-img"
+                            className="item-image"
                           />
                         </div>
-                        <span className='_item_info_span'>
-                          <h3 className='_item_name'>{item.name}</h3>
-                          <p className='_item_price'>${item.price}</p>
+                        <span className="_item_info_span">
+                          <h3 className="_item_name">{item.name}</h3>
+                          <p className="_item_price">${item.price}</p>
                           <p>Quantity: 01</p>
                         </span>
                       </div>
@@ -201,191 +197,80 @@ const CheckoutPage: React.FC = () => {
                   )}
                 </div>
               </div>
+
               {/* Delivery Information */}
-              <div className='delivery-info'>
-                <h2 className='delivery_info'>Delivery Information</h2>
-=======
-    <div className="checkout-container">
-      <div className="checkout-wrapper">
-        <div className="left-section">
-          <div className="review-item">
-            <h2 className="_review_text">Review Item And Shipping</h2>
-            <div className="item-details">
-              {cart.length === 0 ? (
-                <p>Your cart is empty.</p>
-              ) : (
-                cart.map((item: any) => (
-                  <div key={item.id} className="_item_div">
-                    <div className="_img_div">
-                      <img
-                        src={item.image}
-                        alt="product-img"
-                        className="item-image"
-                      />
-                    </div>
-                    <span className="_item_info_span">
-                      <h3 className="_item_name">{item.name}</h3>
-                      <p className="_item_price">${item.price}</p>
-                      <p>Quantity: 01</p>
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-          {/* Delivery Information */}
-          <div className="delivery-info">
-            <h2 className="delivery_info">Delivery Information</h2>
-            <label>
-              <strong>Name:</strong>{" "}
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input-field"
-              />
-            </label>
-            <label>
-              <strong>Address:</strong>{" "}
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="input-field"
-              />
-            </label>
-            <label>
-              <strong>City:</strong>{" "}
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="input-field"
-              />
-            </label>
-            <label>
-              <strong>Zip Code:</strong>{" "}
-              <input
-                type="text"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-                className="input-field"
-              />
-            </label>
-            <label>
-              <strong>Mobile:</strong>{" "}
-              <input
-                type="text"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                className="input-field"
-              />
-            </label>
-
-            <button className="edit-btn">Edit Information</button>
-          </div>
-        </div>
-
-        {/* Right Section: Order Summary */}
-        <div className="right-section">
-          {/* Payment Details */}
-          <div className="checkout-container">
-            <div className="order-summary">
-              <h2 className="company-name">
-                <span className="company-logo">K</span>
-                Kaja payment
-              </h2>
-            </div>
-            <div>
-              <h3 className="section-title">
-                <span className="section-number">1</span>
-                Personal information
-              </h3>
-              <div className="info-box">
->>>>>>> a1131314ea59752f063e8d15412a4397dd84484b
+              <div className="delivery-info">
+                <h2 className="delivery_info">Delivery Information</h2>
                 <label>
                   <strong>Name:</strong>{" "}
                   <input
-<<<<<<< HEAD
-                    type='text'
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className='input-field'
-=======
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
->>>>>>> a1131314ea59752f063e8d15412a4397dd84484b
+                    className="input-field"
                   />
                 </label>
                 <label>
                   <strong>Address:</strong>{" "}
                   <input
-<<<<<<< HEAD
-                    type='text'
+                    type="text"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className='input-field'
-=======
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
->>>>>>> a1131314ea59752f063e8d15412a4397dd84484b
+                    className="input-field"
                   />
                 </label>
                 <label>
                   <strong>City:</strong>{" "}
                   <input
-                    type='text'
+                    type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className='input-field'
+                    className="input-field"
                   />
                 </label>
                 <label>
                   <strong>Zip Code:</strong>{" "}
                   <input
-                    type='text'
+                    type="text"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
-                    className='input-field'
+                    className="input-field"
                   />
                 </label>
                 <label>
                   <strong>Mobile:</strong>{" "}
                   <input
-                    type='text'
+                    type="text"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    className='input-field'
+                    className="input-field"
                   />
                 </label>
 
-                <button className='edit-btn'>Edit Information</button>
+                <button className="edit-btn">Edit Information</button>
               </div>
             </div>
-<<<<<<< HEAD
 
             {/* Right Section: Order Summary */}
-            <div className='right-section'>
+            <div className="right-section">
               {/* Payment Details */}
-              <div className='checkout-container'>
-                <div className='order-summary'>
-                  <h2 className='company-name'>
-                    <span className='company-logo'>K</span>
+              <div className="checkout-container">
+                <div className="order-summary">
+                  <h2 className="company-name">
+                    <span className="company-logo">K</span>
                     Kaja payment
                   </h2>
                 </div>
                 <div>
-                  <h3 className='section-title'>
-                    <span className='section-number'>1</span>
+                  <h3 className="section-title">
+                    <span className="section-number">1</span>
                     Personal information
                   </h3>
-                  <div className='info-box'>
+                  <div className="info-box">
                     <label>
                       <strong>Full name:</strong>
                       <input
-                        type='text'
+                        type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                       />
@@ -393,7 +278,7 @@ const CheckoutPage: React.FC = () => {
                     <label>
                       <strong>Email address:</strong>
                       <input
-                        type='email'
+                        type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -401,12 +286,12 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className='section-title'>
-                    <span className='section-number'>2</span>
+                  <h3 className="section-title">
+                    <span className="section-number">2</span>
                     Payment method
                   </h3>
-                  <div className='payment-section'>
-                    <div className='payment-options'>
+                  <div className="payment-section">
+                    <div className="payment-options">
                       {[
                         {
                           id: "card",
@@ -426,18 +311,21 @@ const CheckoutPage: React.FC = () => {
                       ].map((method) => (
                         <React.Fragment key={method.id}>
                           <div
-                            className={`payment-method ${selectedPayment === method.id ? "selected" : ""}`}
-                            onClick={() => setSelectedPayment(method.id)}>
+                            className={`payment-method ${
+                              selectedPayment === method.id ? "selected" : ""
+                            }`}
+                            onClick={() => setSelectedPayment(method.id)}
+                          >
                             <input
-                              type='radio'
-                              name='payment'
+                              type="radio"
+                              name="payment"
                               checked={selectedPayment === method.id}
                               readOnly
                             />
-                            <span className='payment-label'>
+                            <span className="payment-label">
                               {method.label}
                             </span>
-                            <span className='payment-icons'>
+                            <span className="payment-icons">
                               {method.icons.map((icon, index) => (
                                 <span key={index}>{icon}</span>
                               ))}
@@ -446,64 +334,68 @@ const CheckoutPage: React.FC = () => {
 
                           {method.id === "card" &&
                             selectedPayment === "card" && (
-                              <div className='card-payment-form'>
-                                <h3 className='card-form-title'>
-                                  Enter Card Details
-                                </h3>
-                                <div className='card-input-group'>
-                                  <label className='card-label'>
-                                    Card Number:
-                                  </label>
-                                  <input
-                                    type='text'
-                                    className='card-input'
-                                    value={cardNumber}
-                                    onChange={(e) =>
-                                      setCardNumber(e.target.value)
-                                    }
-                                    placeholder='1234 5678 9012 3456'
-                                  />
+                              <form onSubmit={handleCardPayment}>
+                                <div className="card-payment-form">
+                                  <h3 className="card-form-title">
+                                    Enter Card Details
+                                  </h3>
+                                  <div className="card-input-group">
+                                    <label className="card-label">
+                                      Card Number:
+                                    </label>
+                                    <input
+                                      type="text"
+                                      className="card-input"
+                                      value={cardNumber}
+                                      onChange={(e) =>
+                                        setCardNumber(e.target.value)
+                                      }
+                                      placeholder="1234 5678 9012 3456"
+                                    />
+                                  </div>
+                                  <div className="card-input-group">
+                                    <label className="card-label">
+                                      Expiry Date:
+                                    </label>
+                                    <input
+                                      type="text"
+                                      className="card-input"
+                                      value={expiry}
+                                      onChange={(e) =>
+                                        setExpiry(e.target.value)
+                                      }
+                                      placeholder="MM/YY"
+                                    />
+                                  </div>
+                                  <div className="card-input-group">
+                                    <label className="card-label">CVV:</label>
+                                    <input
+                                      type="text"
+                                      className="card-input"
+                                      value={cvv}
+                                      onChange={(e) => setCvv(e.target.value)}
+                                      placeholder="123"
+                                    />
+                                  </div>
+                                  <div className="card-input-group">
+                                    <label className="card-label">
+                                      Card Holder Name:
+                                    </label>
+                                    <input
+                                      type="text"
+                                      className="card-input"
+                                      value={cardHolder}
+                                      onChange={(e) =>
+                                        setCardHolder(e.target.value)
+                                      }
+                                      placeholder="John Doe"
+                                    />
+                                  </div>
+                                  <button className="card-submit-btn">
+                                    Submit Payment
+                                  </button>
                                 </div>
-                                <div className='card-input-group'>
-                                  <label className='card-label'>
-                                    Expiry Date:
-                                  </label>
-                                  <input
-                                    type='text'
-                                    className='card-input'
-                                    value={expiry}
-                                    onChange={(e) => setExpiry(e.target.value)}
-                                    placeholder='MM/YY'
-                                  />
-                                </div>
-                                <div className='card-input-group'>
-                                  <label className='card-label'>CVV:</label>
-                                  <input
-                                    type='text'
-                                    className='card-input'
-                                    value={cvv}
-                                    onChange={(e) => setCvv(e.target.value)}
-                                    placeholder='123'
-                                  />
-                                </div>
-                                <div className='card-input-group'>
-                                  <label className='card-label'>
-                                    Card Holder Name:
-                                  </label>
-                                  <input
-                                    type='text'
-                                    className='card-input'
-                                    value={cardHolder}
-                                    onChange={(e) =>
-                                      setCardHolder(e.target.value)
-                                    }
-                                    placeholder='John Doe'
-                                  />
-                                </div>
-                                <button className='card-submit-btn'>
-                                  Submit Payment
-                                </button>
-                              </div>
+                              </form>
                             )}
                         </React.Fragment>
                       ))}
@@ -513,156 +405,33 @@ const CheckoutPage: React.FC = () => {
                       (!userAddress ? (
                         <button
                           onClick={connectCrossmark}
-                          className='_connect_btn'>
+                          className="_connect_btn"
+                        >
                           Connect Wallet
                         </button>
                       ) : (
-                        <div className='_sub_div'>
-                          <span className='checkout_prices_span'>
+                        <div className="_sub_div">
+                          <span className="checkout_prices_span">
                             <p>Subtotal ${calculateCartTotal(cart)}</p>
                             <p>Shipping: Free</p>
                             <p>Fee: ${calculateFee(cart)}</p>
-                            <p className='_total'>
+                            <p className="_total">
                               Total: $
                               {calculateCartTotal(cart) + calculateFee(cart)}
                             </p>
                           </span>
-                          <p>
-                            <p>Connected Wallet: {userAddress}</p>
-                          </p>
+                          <p>Connected Wallet: {userAddress}</p>
                           <button
                             onClick={_sendPayments}
-                            className='_checkout_btn'>
+                            className="_checkout_btn"
+                          >
                             Checkout
                           </button>
+                          {paymentStatus && <p>{paymentStatus}</p>}
                         </div>
                       ))}
                   </div>
                 </div>
-=======
-            <div>
-              <h3 className="section-title">
-                <span className="section-number">2</span>
-                Payment method
-              </h3>
-              <div className="payment-section">
-                <div className="payment-options">
-                  {[
-                    {
-                      id: "card",
-                      label: "Card payment",
-                      icons: ["💳", "💳", "💳"],
-                    },
-                    {
-                      id: "wallet",
-                      label: "Wallet payment",
-                      icons: ["🦊", "🌈", "🌊"],
-                    },
-                    { id: "qr", label: "Scan QR", icons: ["🟣", "⬛", "🟡"] },
-                  ].map((method) => (
-                    <React.Fragment key={method.id}>
-                      <div
-                        className={`payment-method ${selectedPayment === method.id ? "selected" : ""}`}
-                        onClick={() => setSelectedPayment(method.id)}
-                      >
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={selectedPayment === method.id}
-                          readOnly
-                        />
-                        <span className="payment-label">{method.label}</span>
-                        <span className="payment-icons">
-                          {method.icons.map((icon, index) => (
-                            <span key={index}>{icon}</span>
-                          ))}
-                        </span>
-                      </div>
-
-                      {method.id === "card" && selectedPayment === "card" && (
-                        <form onSubmit={handleCardPayment}>
-                          <div className="card-payment-form">
-                            <h3 className="card-form-title">
-                              Enter Card Details
-                            </h3>
-                            <div className="card-input-group">
-                              <label className="card-label">Card Number:</label>
-                              <input
-                                type="text"
-                                className="card-input"
-                                value={cardNumber}
-                                onChange={(e) => setCardNumber(e.target.value)}
-                                placeholder="1234 5678 9012 3456"
-                              />
-                            </div>
-                            <div className="card-input-group">
-                              <label className="card-label">Expiry Date:</label>
-                              <input
-                                type="text"
-                                className="card-input"
-                                value={expiry}
-                                onChange={(e) => setExpiry(e.target.value)}
-                                placeholder="MM/YY"
-                              />
-                            </div>
-                            <div className="card-input-group">
-                              <label className="card-label">CVV:</label>
-                              <input
-                                type="text"
-                                className="card-input"
-                                value={cvv}
-                                onChange={(e) => setCvv(e.target.value)}
-                                placeholder="123"
-                              />
-                            </div>
-                            <div className="card-input-group">
-                              <label className="card-label">
-                                Card Holder Name:
-                              </label>
-                              <input
-                                type="text"
-                                className="card-input"
-                                value={cardHolder}
-                                onChange={(e) => setCardHolder(e.target.value)}
-                                placeholder="John Doe"
-                              />
-                            </div>
-                            <button className="card-submit-btn">
-                              Submit Payment
-                            </button>
-                          </div>
-                        </form>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-
-                {selectedPayment === "wallet" &&
-                  (!userAddress ? (
-                    <button onClick={connectCrossmark} className="_connect_btn">
-                      Connect Wallet
-                    </button>
-                  ) : (
-                    <div className="_sub_div">
-                      <span className="checkout_prices_span">
-                        <p>Subtotal ${calculateCartTotal(cart)}</p>
-                        <p>Shipping: Free</p>
-                        <p>Fee: ${calculateFee(cart)}</p>
-                        <p className="_total">
-                          Total: $
-                          {calculateCartTotal(cart) + calculateFee(cart)}
-                        </p>
-                      </span>
-                      <p>
-                        <p>Connected Wallet: {userAddress}</p>
-                      </p>
-                      <button onClick={sendPayments} className="_checkout_btn">
-                        Checkout
-                      </button>
-                      {paymentStatus && <p>{paymentStatus}</p>}
-                    </div>
-                  ))}
->>>>>>> a1131314ea59752f063e8d15412a4397dd84484b
               </div>
             </div>
           </div>
@@ -672,66 +441,4 @@ const CheckoutPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default CheckoutPage;
-=======
-export default CheckoutPage;
-
-// export default function PaymentComponent({ cart }) {
-//   // Step 4: Send RLUSD Payment
-//   const sendPayment = async () => {
-//     try {
-//       if (!xrplClient || !xrplClient.isConnected()) {
-//         alert("XRPL Client not connected.");
-//         return;
-//       }
-
-//       const address = await connectCrossmark();
-
-//       const trustLineCreated = await createTrustLine();
-//       if (!trustLineCreated) {
-//         setPaymentStatus("❌ Failed to create trust line.");
-//         return;
-//       }
-
-//       const tx = {
-//         TransactionType: "Payment",
-//         Account: address,
-//         Amount: {
-//           currency: "RLUSD",
-//           issuer: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
-//           value: calculateCartTotal(cart),
-//         },
-//         Destination: "rnbZANGTwqJBVZCUddLjimprTxP8tsTtny", // replace with merchant's address
-//       };
-
-//       const res = await window.crossmark.methods.signAndSubmitAndWait(tx, {
-//         network: "xahau-testnet",
-//       });
-
-//       console.log("Payment TX:", res);
-
-//       if (res.result?.engine_result === "tesSUCCESS") {
-//         setPaymentStatus("✅ Payment successful!");
-//       } else {
-//         setPaymentStatus("❌ Payment failed.");
-//       }
-//     } catch (err) {
-//       console.error("Error:", err);
-//       setPaymentStatus("❌ Something went wrong.");
-//     }
-//   };
-
-//   // Replace with your actual logic
-//   const calculateCartTotal = (cart) => {
-//     return "50"; // Example: fixed total of 50 RLUSD
-//   };
-
-//   return (
-//     <div>
-//       <button onClick={sendPayment}>Pay with RLUSD</button>
-//       {paymentStatus && <p>{paymentStatus}</p>}
-//     </div>
-//   );
-// }
->>>>>>> a1131314ea59752f063e8d15412a4397dd84484b
