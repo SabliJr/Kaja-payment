@@ -1,0 +1,76 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Wireless Earbuds, IPX8",
+      "description": "Organic Cotton, fairtrade certified",
+      "price": 89.0,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/3-2.png"
+    },
+    {
+      "id": 2,
+      "name": "AirPods Max",
+      "description": "A perfect balance of high-fidelity audio",
+      "price": 559.99,
+      "rating": 5,
+      "reviews": 121,
+      "image": "ProductImages/AirPodsMax.png"
+    },
+    {
+      "id": 3,
+      "name": "Bose BT Earphones",
+      "description": "Table with air purifier, stained veneer/black",
+      "price": 289.0,
+      "rating": 4,
+      "reviews": 121,
+      "image": "ProductImages/CREA-1078_QCEB25_Black_ThreeQuarterView_7200x7200-600x600.png"
+    },
+    {
+      "id": 4,
+      "name": "VIVEFOX Headphones",
+      "description": "Wired Stereo Headsets With Mic",
+      "price": 39.0,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/blue.webp"
+    },
+    {
+      "id": 5,
+      "name": "JBL TUNE 600BTNC",
+      "description": "Premium Bone Conduction Open Ear Bluetooth",
+      "price": 59.0,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/600BTNC_Hero.png"
+    },
+    {
+      "id": 6,
+      "name": "TAGRY Bluetooth",
+      "description": "256, 8 core GPU, 8 GB",
+      "price": 109.0,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/71bVO6Rg49L.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Monster MNFLEX",
+      "description": "Flex Active Noise Canceling Bluetooth",
+      "price": 89.75,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/51nqbjBZZ6L.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Mpow CH6",
+      "description": "Kids Headphones",
+      "price": 569.0,
+      "rating": 5,
+      "reviews": 121,
+      "image": "/ProductImages/1_12c3d23e.webp"
+    }
+  ]
+}
